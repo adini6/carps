@@ -21,4 +21,4 @@ Carpe diem is a simple calendar application that allows users to schedule their 
 ## Application
 
 ## Credit
-Completed by Abdikalik Dini with starter code provided https://github.com/coding-boot-camp/crispy-octo-meme
+Completed by Abdikalik Dini with starter code cloned from  https://github.com/coding-boot-camp/crispy-octo-meme
