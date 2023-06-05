@@ -1,23 +1,58 @@
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
+//call to jquery to run only when document completely loads
 $(function () {
-  // TODO: Add a listener for click events on the save button. This code should
-  // use the id in the containing time-block as a key to save the user input in
-  // local storage. HINT: What does `this` reference in the click listener
-  // function? How can DOM traversal be used to get the "hour-x" id of the
-  // time-block containing the button that was clicked? How might the id be
-  // useful when saving the description in local storage?
-  //
-  // TODO: Add code to apply the past, present, or future class to each time
-  // block by comparing the id to the current hour. HINTS: How can the id
-  // attribute of each time-block be used to conditionally add or remove the
-  // past, present, and future classes? How can Day.js be used to get the
-  // current hour in 24-hour time?
-  //
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  //
-  // TODO: Add code to display the current date in the header of the page.
+  //generates time blocks for business hours
+  function generateTimeBlocks() {
+    //uses day.js library for current time
+    var currentHour = dayjs().hour();
+    //for loop for business hours
+    for (var hour = 9; hour <= 17; hour++) {
+      // Create elements for the time block, hour, description, save button, and save icon
+      var timeBlockEl = $('<div>').addClass('row time-block');
+      var hourEl = $('<div>').addClass('col-2 col-md-1 hour text-center py-3');
+      var descriptionEl = $('<textarea>').addClass('col-8 col-md-10 description');
+      var saveBtnEl = $('<button>').addClass('btn saveBtn col-2 col-md-1').attr('aria-label', 'save');
+      var saveIconEl = $('<i>').addClass('fas fa-save').attr('aria-hidden', 'true');
+
+      // Set the hour text
+      hourEl.text(dayjs().hour(hour).format('hA'));
+
+      // Set the time-block id
+      timeBlockEl.attr('id', 'hour-' + hour);
+
+      // class to show past, present, or future time
+      if (hour < currentHour) {
+        timeBlockEl.addClass('past');
+      } else if (hour === currentHour) {
+        timeBlockEl.addClass('present');
+      } else {
+        timeBlockEl.addClass('future');
+      }
+
+      // loads saved user input from local storage
+      var savedDescription = localStorage.getItem('hour-' + hour);
+      if (savedDescription) {
+        descriptionEl.val(savedDescription);
+      }
+
+      // appends saveIconEl to saveBtnEl
+      saveBtnEl.append(saveIconEl);
+      timeBlockEl.append(hourEl, descriptionEl, saveBtnEl);
+
+      // append timeBlockEl to timeBlocks
+      $('#timeBlocks').append(timeBlockEl);
+    }
+  }
+
+  // click event listener for save button
+  $(document).on('click', '.saveBtn', function () {
+    var hourId = $(this).parent().attr('id');
+    var description = $(this).siblings('.description').val();
+    localStorage.setItem(hourId, description);
+  });
+
+  // shows the current date
+  $('#currentDay').text(dayjs().format('dddd, MMMM D, YYYY'));
+
+  // generates time blocks when page loads
+  generateTimeBlocks();
 });
